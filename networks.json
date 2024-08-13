@@ -1,0 +1,8 @@
+{
+  "arbitrum-sepolia": {
+    "ChatterPayWalletFactory": {
+      "address": "0xE74DB72ad1652940d2edC1FaE5C2c41801608e1D",
+      "startBlock": 70714703
+    }
+  }
+}

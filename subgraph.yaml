@@ -1,0 +1,29 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ChatterPayWalletFactory
+    network: arbitrum-sepolia
+    source:
+      address: "0xE74DB72ad1652940d2edC1FaE5C2c41801608e1D"
+      abi: ChatterPayWalletFactory
+      startBlock: 70714703
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - OwnershipTransferred
+        - ProxyCreated
+      abis:
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: ProxyCreated(indexed address,indexed address)
+          handler: handleProxyCreated
+      file: ./src/chatter-pay-wallet-factory.ts
