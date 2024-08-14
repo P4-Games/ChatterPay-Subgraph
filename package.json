@@ -1,6 +1,10 @@
 {
   "name": "chatterpay",
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "private": false,
+  "author": "P4-games",
+  "version": "1.0.0",
+  "description": "Crypto a un mensaje de distancia!",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
