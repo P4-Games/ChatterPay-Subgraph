@@ -42,7 +42,7 @@ templates:
         - name: ChatterPay
           file: ./abis/ChatterPay.json
       eventHandlers:
-        - event: TokenTransfer(indexed address,indexed uint256,bytes)
+        - event: TokenTransfer(indexed address,indexed address,indexed uint256,bytes)
           handler: handleTokenTransfer
-        - event: Execution(indexed address,indexed uint256,bytes)
+        - event: Execution(indexed address,indexed address,indexed uint256,bytes)
           handler: handleTokenTransfer

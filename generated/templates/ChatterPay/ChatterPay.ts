@@ -23,16 +23,20 @@ export class Execution__Params {
     this._event = event;
   }
 
-  get dest(): Address {
+  get wallet(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
+  get dest(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
   get value(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+    return this._event.parameters[2].value.toBigInt();
   }
 
   get functionData(): Bytes {
-    return this._event.parameters[2].value.toBytes();
+    return this._event.parameters[3].value.toBytes();
   }
 }
 
@@ -89,16 +93,20 @@ export class TokenTransfer__Params {
     this._event = event;
   }
 
-  get dest(): Address {
+  get wallet(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
+  get dest(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
   get fee(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+    return this._event.parameters[2].value.toBigInt();
   }
 
   get functionData(): Bytes {
-    return this._event.parameters[2].value.toBytes();
+    return this._event.parameters[3].value.toBytes();
   }
 }
 
