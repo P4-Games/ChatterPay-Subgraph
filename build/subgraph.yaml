@@ -2,7 +2,7 @@ specVersion: 1.0.0
 indexerHints:
   prune: auto
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: ChatterPayWalletFactory
@@ -19,8 +19,8 @@ dataSources:
         - Wallet
       abis:
         - name: ChatterPayWalletFactory
-          file: ./abis/ChatterPayWalletFactory.json
+          file: ChatterPayWalletFactory/abis/ChatterPayWalletFactory.json
       eventHandlers:
         - event: ProxyCreated(indexed address,indexed address)
           handler: handleProxyCreated
-      file: ./src/chatter-pay-wallet-factory.ts
+      file: ChatterPayWalletFactory/ChatterPayWalletFactory.wasm
