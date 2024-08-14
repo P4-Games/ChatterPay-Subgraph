@@ -36,7 +36,7 @@ __1. Install these Requirements__:
 
 - [git](https://git-scm.com/)
 - [nvm](https://github.com/nvm-sh/nvm) (allows you to quickly install and use different versions of node via the command line.)
-- node js & npm (insalled with nvm)
+- node js & npm (installed with nvm)
 
 
 __2. Clone repository__:
