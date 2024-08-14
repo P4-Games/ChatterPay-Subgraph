@@ -16,3 +16,5 @@ export function handleProxyCreated(event: ProxyCreatedEvent): void {
 
   entity.save()
 }
+
+// pending: add ownership transfer

@@ -24,3 +24,25 @@ dataSources:
         - event: ProxyCreated(indexed address,indexed address)
           handler: handleProxyCreated
       file: ./src/chatter-pay-wallet-factory.ts
+templates:
+  - name: ChatterPay
+    kind: ethereum/contract
+    network: arbitrum-sepolia
+    source:
+      abi: ChatterPay
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/chatterpay.ts
+      entities:
+        - TokenTransfer
+        - Execution
+      abis:
+        - name: ChatterPay
+          file: ./abis/ChatterPay.json
+      eventHandlers:
+        - event: TokenTransfer(indexed address,indexed uint256,bytes)
+          handler: handleTokenTransfer
+        - event: Execution(indexed address,indexed uint256,bytes)
+          handler: handleTokenTransfer
