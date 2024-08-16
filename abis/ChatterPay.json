@@ -28,7 +28,11 @@
   {
     "type": "function",
     "name": "executeTokenSwap",
-    "inputs": [],
+    "inputs": [
+      { "name": "dest", "type": "address", "internalType": "address" },
+      { "name": "fee", "type": "uint256", "internalType": "uint256" },
+      { "name": "functionData", "type": "bytes", "internalType": "bytes" }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },

@@ -376,6 +376,18 @@ export class ExecuteTokenSwapCall__Inputs {
   constructor(call: ExecuteTokenSwapCall) {
     this._call = call;
   }
+
+  get dest(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get fee(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get functionData(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
+  }
 }
 
 export class ExecuteTokenSwapCall__Outputs {

@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: ChatterPayWalletFactory
-    network: arbitrum-sepolia
+    network: scroll-sepolia
     source:
-      address: "0xE74DB72ad1652940d2edC1FaE5C2c41801608e1D"
+      address: "0x5904ea48b047d32cc6febacdce227f383cb954bc"
       abi: ChatterPayWalletFactory
-      startBlock: 70714703
+      startBlock: 6107455
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -27,7 +27,7 @@ dataSources:
 templates:
   - name: ChatterPay
     kind: ethereum/contract
-    network: arbitrum-sepolia
+    network: scroll-sepolia
     source:
       abi: ChatterPay
     mapping:
@@ -36,13 +36,10 @@ templates:
       language: wasm/assemblyscript
       file: ./src/chatterpay.ts
       entities:
-        - TokenTransfer
         - Execution
       abis:
         - name: ChatterPay
           file: ./abis/ChatterPay.json
       eventHandlers:
-        - event: TokenTransfer(indexed address,indexed address,indexed uint256,bytes)
-          handler: handleTokenTransfer
         - event: Execution(indexed address,indexed address,indexed uint256,bytes)
-          handler: handleTokenTransfer
+          handler: handleExecution
