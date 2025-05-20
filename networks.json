@@ -1,0 +1,8 @@
+{
+  "scroll": {
+    "chainId": 534352,
+    "rpc": "https://rpc.scroll.io",
+    "explorer": "https://scrollscan.com",
+    "startBlock": 15400000
+  }
+}
