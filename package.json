@@ -1,6 +1,10 @@
 {
-  "name": "balances-scroll",
-  "license": "UNLICENSED",
+  "name": "chatterpay-subgraph",
+  "license": "MIT",
+  "private": false,
+  "author": "P4-games",
+  "version": "1.0.0",
+  "description": "Crypto at a message's distance!",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
