@@ -5,41 +5,113 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: ChatterPayWalletFactory
-    network: scroll-sepolia
+    name: ChatterPayFactory
+    network: scroll
     source:
-      address: "0x5904ea48b047d32cc6febacdce227f383cb954bc"
-      abi: ChatterPayWalletFactory
-      startBlock: 6107455
+      address: "0xE17Ca047427557C3bdeD9d151a823D8e2B514e74"
+      abi: ChatterPayFactory
+      startBlock: 15400000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - Wallet
+        - ChatterPayAccount
+        - DefaultTokensUpdated
+        - NewImplementation
+        - ProxyCreated
       abis:
-        - name: ChatterPayWalletFactory
-          file: ./abis/ChatterPayWalletFactory.json
+        - name: ChatterPayFactory
+          file: ./abis/ChatterPayFactory.json
       eventHandlers:
+        - event: DefaultTokensUpdated(address[],address[])
+          handler: handleDefaultTokensUpdated
+        - event: NewImplementation(indexed address)
+          handler: handleNewImplementation
         - event: ProxyCreated(indexed address,indexed address)
           handler: handleProxyCreated
-      file: ./src/chatter-pay-wallet-factory.ts
-templates:
-  - name: ChatterPay
-    kind: ethereum/contract
-    network: scroll-sepolia
+      file: ./src/chatterpay.ts
+
+  - kind: ethereum
+    name: USDT
+    network: scroll
     source:
-      abi: ChatterPay
+      address: "0xf55bec9cafdbe8730f096aa55dad6d22d44099df"  # Scroll USDT
+      abi: USDT
+      startBlock: 15400000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: ./src/chatterpay.ts
       entities:
-        - Execution
+        - Approval
+        - OwnershipTransferred
+        - Transfer
+        - ChatterPayTransfer
       abis:
-        - name: ChatterPay
-          file: ./abis/ChatterPay.json
+        - name: USDT
+          file: ./abis/USDT.json
       eventHandlers:
-        - event: Execution(indexed address,indexed address,indexed uint256,bytes)
-          handler: handleExecution
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleUSDTTransfer
+      file: ./src/chatterpay.ts
+
+  - kind: ethereum
+    name: WETH
+    network: scroll
+    source:
+      address: "0x5300000000000000000000000000000000000004"  # Scroll WETH
+      abi: WETH
+      startBlock: 15400000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - WETHApproval
+        - WETHOwnershipTransferred
+        - WETHTransfer
+        - ChatterPayTransfer
+      abis:
+        - name: WETH
+          file: ./abis/WETH.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleWETHApproval
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleWETHOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleWETHTransfer
+      file: ./src/chatterpay.ts
+
+  - kind: ethereum
+    name: WBTC
+    network: scroll
+    source:
+      address: "0x3C1BCa5a656e69edCD0D4E36BEbb3FcDAcA60Cf1"  # Scroll WBTC
+      abi: WBTC
+      startBlock: 15400000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - WBTCApproval
+        - WBTCOwnershipTransferred
+        - WBTCTransfer
+        - ChatterPayTransfer
+      abis:
+        - name: WBTC
+          file: ./abis/WBTC.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleWBTCApproval
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleWBTCOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleWBTCTransfer
+      file: ./src/chatterpay.ts
