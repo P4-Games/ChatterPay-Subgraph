@@ -84,7 +84,7 @@ type WBTCTransfer @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type ChatterPayAccount @entity {
+type ChatterPayAccount @entity(immutable: false) {
   id: Bytes! # address
   owner: Bytes! # address
   createdAt: BigInt!
