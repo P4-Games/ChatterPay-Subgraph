@@ -51,6 +51,7 @@ __1. Install these Requirements__:
 - [git](https://git-scm.com/)
 - [nvm](https://github.com/nvm-sh/nvm) (allows you to quickly install and use different versions of node via the command line.)
 - node js & npm (installed with nvm)
+- graph-client: `npm install -g @graphprotocol/graph-cli` or  `yarn global add @graphprotocol/graph-cli`
 
 
 __2. Clone repository__:
@@ -81,8 +82,46 @@ yarn config delete proxy
 yarn --network-timeout 100000
 ```
 
-# Additional Info
+__4. Generate folder 'generated'__:
 
+```sh
+graph codegen
+```
+
+__5. Build__:
+
+```sh
+graph build
+```
+
+__6. Run Local Graph Node (optional)__:
+
+If you want to test your subgraph locally instead of deploying to The Graph Hosted Service or Subgraph Studio:
+
+```sh
+docker-compose up
+```
+
+__7. Deploy__:
+
+_Local Deploy_
+
+```sh
+graph create <your-subgraph-name> --node http://localhost:8020
+graph deploy <your-subgraph-name> --node http://localhost:8020 --ipfs http://localhost:5001
+```
+
+_Hosted Service Deploy_
+
+```sh
+# Authenticate with your deploy key
+graph auth --product hosted-service <YOUR_DEPLOY_KEY>
+
+# Create your subgraph in The Graph Hosted Service, then deploy it
+graph deploy --product hosted-service <GITHUB_USER>/<SUBGRAPH_NAME>
+```
+
+# Additional Info
 
 **Contribution**:
 
