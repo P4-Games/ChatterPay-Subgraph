@@ -33,9 +33,13 @@
 
 # About this repo
 
-This repository contains a GraphQL API designed for interacting with Chatterpay's Contracts data.
+This repository contains a GraphQL API designed for tracking Deposits from non-Chatters to ChatterPay Accounts.
 
-__Build With__:
+It is intended to index from the block 15400000 in scroll mainnet, which represents an approximate date from when the accounts started running under the last deploy.
+
+Also only the following tokens are included: USDT, WETH and WBTC, which are currently supported by ChatterPay. More may be added in the future.
+
+__Built With__:
 
 - GraphQl Cli: [The Graph CLI](https://www.npmjs.com/package/@graphprotocol/graph-cli)
 - Language: [TypeScript](https://www.typescriptlang.org)
@@ -47,6 +51,7 @@ __1. Install these Requirements__:
 - [git](https://git-scm.com/)
 - [nvm](https://github.com/nvm-sh/nvm) (allows you to quickly install and use different versions of node via the command line.)
 - node js & npm (installed with nvm)
+- graph-client: `npm install -g @graphprotocol/graph-cli` or  `yarn global add @graphprotocol/graph-cli`
 
 
 __2. Clone repository__:
@@ -77,8 +82,46 @@ yarn config delete proxy
 yarn --network-timeout 100000
 ```
 
-# Additional Info
+__4. Generate folder 'generated'__:
 
+```sh
+graph codegen
+```
+
+__5. Build__:
+
+```sh
+graph build
+```
+
+__6. Run Local Graph Node (optional)__:
+
+If you want to test your subgraph locally instead of deploying to The Graph Hosted Service or Subgraph Studio:
+
+```sh
+docker-compose up
+```
+
+__7. Deploy__:
+
+_Local Deploy_
+
+```sh
+graph create <your-subgraph-name> --node http://localhost:8020
+graph deploy <your-subgraph-name> --node http://localhost:8020 --ipfs http://localhost:5001
+```
+
+_Hosted Service Deploy_
+
+```sh
+# Authenticate with your deploy key
+graph auth --product hosted-service <YOUR_DEPLOY_KEY>
+
+# Create your subgraph in The Graph Hosted Service, then deploy it
+graph deploy --product hosted-service <GITHUB_USER>/<SUBGRAPH_NAME>
+```
+
+# Additional Info
 
 **Contribution**:
 
@@ -101,5 +144,4 @@ _Contributors_:
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/company/chatterpay)
 [![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?style=flat&logo=facebook&logoColor=white)](https://www.facebook.com/chatterpay)
 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/@chatterpay)
-[![WhatsApp Community](https://img.shields.io/badge/WhatsApp%20Community-25D366.svg?style=flat&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/HZJrBEUYyoF8FtchfJhzmZ)
-
+[![WhatsApp Community](https://img.shields.io/badge/WhatsApp%20Community-25D366.svg?style=flat&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/HZJrBEUYyoF8FtchfJhzmZ) 
