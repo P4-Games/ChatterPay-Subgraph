@@ -17,7 +17,7 @@
     "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ chatterpay-subgraph",
     "test": "graph test",
     "docker-up": "docker compose up -d",
-    "docker-down": "docker compose down",
+    "docker-down": "docker compose down -v --remove-orphans",
     "docker-reset": "docker compose down -v",
     "docker-logs": "docker compose logs -f graph-node"
   },
