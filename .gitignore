@@ -42,7 +42,7 @@ cache/
 
 # Generated automatically
 # These are recreated every time you run:
-#   node scripts/generate-subgraph.ts <network>
+#   node scripts/generate-subgraph.js <network>
 #   graph codegen
 # Never commit them.
 subgraph.yaml

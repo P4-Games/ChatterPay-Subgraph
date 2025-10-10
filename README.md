@@ -165,7 +165,7 @@ For details on how to access the **Postgres** container, explore schemas, and ve
 When you edit any files in `src/**`, regenerate and rebuild the subgraph:
 
 ```bash
-node scripts/generate-subgraph.ts
+node scripts/generate-subgraph.js
 graph codegen
 graph build
 ```
