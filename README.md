@@ -10,19 +10,17 @@
 
 > Build By: [mpefaur](https://github.com/mpefaur), [tomasfrancizco](https://github.com/tomasfrancizco), [TomasDmArg](https://github.com/TomasDmArg), [gonzageraci](https://github.com/gonzageraci), [dappsar](https://github.com/dappsar)
 
-
 **Get started with our Bot 🤖**:
 
 [![WhatsApp Bot](https://img.shields.io/badge/Start%20on%20WhatsApp-25D366.svg?style=flat&logo=whatsapp&logoColor=white)](https://wa.me/5491164629653)
 
-
-**Components**:
+**Components**
 
 - Landing Page ([product](https://chatterpay.net), [source code](https://github.com/P4-Games/ChatterPay))
 - User Dashboard Website ([product](https://chatterpay.net/dashboard), [source code](https://github.com/P4-Games/ChatterPay))
-- Backend API ([source code](https://github.com/P4-Games/ChatterPay-Backend)) 
+- Backend API ([source code](https://github.com/P4-Games/ChatterPay-Backend))
 - Smart Contracts ([source code](https://github.com/P4-Games/ChatterPay-SmartContracts))
-- Data Indexing (Subgraph) ([source code](https://github.com/P4-Games/ChatterPay-Subgraph)) (this Repo)
+- Data Indexing (Subgraph) ([source code](https://github.com/P4-Games/ChatterPay-Subgraph)) (this repo)
 - Bot AI (Chatizalo) ([product](https://chatizalo.com/))
 - Bot AI Admin Dashboard Website ([product](https://app.chatizalo.com/))
 
@@ -30,48 +28,47 @@
 
 ![Components Interaction](https://github.com/P4-Games/ChatterPay-Backend/blob/develop/.doc/technical-overview/chatterpay-architecture-conceptual-view.jpg?raw=true)
 
-
 # About this repo
 
-This repository contains a GraphQL API designed for tracking Deposits from non-Chatters to ChatterPay Accounts.
+This repository contains a GraphQL API designed for tracking deposits from non-Chatters to ChatterPay Accounts.
 
-It is intended to index from the block 15400000 in scroll mainnet, which represents an approximate date from when the accounts started running under the last deploy.
+It indexes from a defined block in the Scroll network, representing when the latest deployment started.
 
-Also only the following tokens are included: USDT, WETH and WBTC, which are currently supported by ChatterPay. More may be added in the future.
+Currently, only the following tokens are included: **USDT**, and **WETH**, which are supported by ChatterPay. More may be added in the future.
 
-__Built With__:
+__Built With__
 
-- GraphQl Cli: [The Graph CLI](https://www.npmjs.com/package/@graphprotocol/graph-cli)
+- GraphQL CLI: [The Graph CLI](https://www.npmjs.com/package/@graphprotocol/graph-cli)
 - Language: [TypeScript](https://www.typescriptlang.org)
 
 # Getting Started
 
-__1. Install these Requirements__:
+This section explains, step by step, how to set up and run the ChatterPay Subgraph locally, in development, or in production.  It assumes **no prior experience** with The Graph, GraphQL, or blockchain indexing.
 
-- [git](https://git-scm.com/)
-- [nvm](https://github.com/nvm-sh/nvm) (allows you to quickly install and use different versions of node via the command line.)
-- node js & npm (installed with nvm)
-- graph-client: `npm install -g @graphprotocol/graph-cli` or  `yarn global add @graphprotocol/graph-cli`
+## 🧰 1. Requirements
 
+Make sure the following are installed on your system:
 
-__2. Clone repository__:
+| Tool | Purpose | Install |
+|------|----------|----------|
+| **git** | clone the repository | [Download](https://git-scm.com/) |
+| **nvm** | manage Node.js versions | [nvm-sh/nvm](https://github.com/nvm-sh/nvm) |
+| **Node.js** (≥ 18.x) & **npm** | core JavaScript runtime | comes with nvm |
+| **Yarn** (optional but recommended) | dependency manager | `npm install -g yarn` |
+| **Docker + Docker Compose** | runs the local Graph Node, IPFS, and Postgres | [Install Docker](https://docs.docker.com/get-docker/) |
+| **The Graph CLI** | main CLI tool for subgraphs | see [.doc/development/install_graph_ql.md](./.doc/development/install_graph_ql.md) |
+
+## 📥 2. Clone and install dependencies
 
 ```bash
-   git clone https://github.com/P4-Games/ChatterPay-Subgraph
-   cd ChatterPay-Subgraph
-```
+git clone https://github.com/P4-Games/ChatterPay-Subgraph.git
+cd ChatterPay-Subgraph
+yarn install  # or npm install
+````
 
-__3. Install Dependencies__:
+If you hit dependency errors (proxy, timeout, or registry issues), reset npm/yarn configs:
 
-
-```sh
-- yarn install # with yarn
-- npm i # with npm
-```
-
-If you have troubles with dependencies, try this:
-
-```sh
+```bash
 set http_proxy=
 set https_proxy=
 npm config rm https-proxy
@@ -82,66 +79,132 @@ yarn config delete proxy
 yarn --network-timeout 100000
 ```
 
-__4. Generate folder 'generated'__:
+Understood. Here’s the corrected section, exactly as you want it — clear, simple, and accurate:
+`setup-local` does *everything*, and `install_graph_ql.md` is **only** for manually reinstalling The Graph CLI if something fails.
+No ambiguity, no false “alternatives.”
 
-```sh
-graph codegen
+---
+Here’s your section rewritten fully in **English**, clear, structured, and professional — everything you meant to say, but formatted to read naturally for developers.
+
+
+Aquí tenés esa sección actualizada, reflejando el nuevo comportamiento del script `setup-local` — ahora elige o recibe la red (`scroll` o `scroll-sepolia`) dinámicamente en lugar de usar una por defecto:
+
+## ⚙️ 3. Local Environment
+
+### Setup
+
+Before running the subgraph, you must prepare your environment.
+This process is automated through a single command.
+
+The **`setup-local`** script installs and configures everything required to run the subgraph locally:
+
+* Installs **The Graph CLI** (via npm) if not present
+* Sets up and starts **Docker** containers (Graph Node, IPFS, and Postgres)
+* Detects or prompts for the target **network** (`scroll` or `scroll-sepolia`)
+* Generates `subgraph.yaml` and `schema.graphql` for the selected network
+* Runs `graph codegen` and `graph build`
+* Deploys the subgraph to your **local Graph Node**
+
+Run the full setup with:
+
+```bash
+yarn setup-local
+# or
+npm run setup-local
 ```
 
-__5. Build__:
+During execution, the script will ask:
 
-```sh
+```
+🌐 Select network (scroll / scroll-sepolia):
+```
+
+You can also skip the prompt by providing the network directly:
+
+```bash
+yarn setup-local scroll
+# or
+yarn setup-local scroll-sepolia
+```
+
+If you encounter issues specifically with **The Graph CLI** installation, you can manually reinstall or fix it following:
+➡️ [./.doc/development/install_graph_ql.md](./.doc/development/install_graph_ql.md)
+
+
+### Working with data
+
+Once everything is up and running, open:
+
+```
+http://localhost:8000/subgraphs/name/chatterpay-subgraph/graphql
+```
+
+You can explore and run queries directly in the browser using the built-in GraphQL playground.
+
+After the containers are started, the subgraph will begin syncing blocks from the network.
+The starting block number is defined in `networks.json`.
+If the block number is far behind the current chain head, syncing may take a while — that’s normal.
+
+Once synchronization is complete, you can test it by performing a **transaction in ChatterPay**.
+Check the logs of the Graph Node container to confirm the subgraph picked it up.
+
+To view the logs:
+
+```bash
+yarn docker-logs
+```
+
+### Inspecting the Database (PostgreSQL)
+
+For details on how to access the **Postgres** container, explore schemas, and verify that your subgraph entities are being indexed correctly (e.g., `ERC20Transfer`, `ChatterPayAccount`), see:
+➡️ [./.doc/development/postgresql_commands.md](./.doc/development/postgresql_commands.md)
+
+
+### Update and rebuild during development
+
+When you edit any files in `src/**`, regenerate and rebuild the subgraph:
+
+```bash
+node scripts/generate-subgraph.js
+graph codegen
 graph build
 ```
 
-__6. Run Local Graph Node (optional)__:
+### Temporary build files (not committed to the repository)
 
-If you want to test your subgraph locally instead of deploying to The Graph Hosted Service or Subgraph Studio:
-
-```sh
-docker-compose up
+```
+/build
+/generated
+/subgraph.yaml
 ```
 
-__7. Deploy__:
 
-_Local Deploy_
+## ⚙️ 4. Test and Production Environment Setup
 
-```sh
-graph create <your-subgraph-name> --node http://localhost:8020
-graph deploy <your-subgraph-name> --node http://localhost:8020 --ipfs http://localhost:5001
-```
+For **test** and **production** installation steps, see
+➡️ [./.doc/implementation/implementation.md](./.doc/implementation/implementation.md)
 
-_Hosted Service Deploy_
-
-```sh
-# Authenticate with your deploy key
-graph auth --product hosted-service <YOUR_DEPLOY_KEY>
-
-# Create your subgraph in The Graph Hosted Service, then deploy it
-graph deploy --product hosted-service <GITHUB_USER>/<SUBGRAPH_NAME>
-```
 
 # Additional Info
 
-**Contribution**:
+**Contribution**
 
-Thank you for considering helping out with the source code! We welcome contributions from anyone on the internet, and are grateful for even the smallest of fixes!
+Thank you for considering helping out with the source code! We welcome contributions from anyone on the internet and are grateful for even the smallest fixes.
 
-If you'd like to contribute to ChatterPay, please fork, fix, commit and send a pull request for the maintainers to review and merge into the main code base. If you wish to submit more complex changes though, please check up with the [core devs](https://github.com/P4-Games/chatterPay-Subgraph/graphs/contributors) first to ensure those changes are in line with the general philosophy of the project and/or get some early feedback which can make both your efforts much lighter as well as our review and merge procedures quick and simple.
+If you'd like to contribute to ChatterPay, please fork, fix, commit, and send a pull request for the maintainers to review and merge into the main code base. For more complex changes, please check with the [core devs](https://github.com/P4-Games/chatterPay-Subgraph/graphs/contributors) first to ensure alignment with the project’s philosophy and to simplify the review process.
 
-_Contributors_: 
+*Contributors*
 
-* [dappsar](https://github.com/dappsar) - [tomasDmArg](https://github.com/TomasDmArg).
+* [dappsar](https://github.com/dappsar)
+* [tomasDmArg](https://github.com/TomasDmArg)
 
-* See more in: <https://github.com/P4-Games/chatterPay-Subgraph/graphs/contributors>
+See more in: [https://github.com/P4-Games/chatterPay-Subgraph/graphs/contributors](https://github.com/P4-Games/chatterPay-Subgraph/graphs/contributors)
 
 <p>&nbsp;</p>
 
----
-
-[![X](https://img.shields.io/badge/X-%231DA1F2.svg?style=flat&logo=twitter&logoColor=white)](https://x.com/chatterpay)
-[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=flat&logo=instagram&logoColor=white)](https://www.instagram.com/chatterpayofficial)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/company/chatterpay)
-[![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?style=flat&logo=facebook&logoColor=white)](https://www.facebook.com/chatterpay)
-[![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/@chatterpay)
-[![WhatsApp Community](https://img.shields.io/badge/WhatsApp%20Community-25D366.svg?style=flat&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/HZJrBEUYyoF8FtchfJhzmZ) 
+[![X](https://img.shields.io/badge/X-%231DA1F2.svg?style=flat\&logo=twitter\&logoColor=white)](https://x.com/chatterpay)
+[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=flat\&logo=instagram\&logoColor=white)](https://www.instagram.com/chatterpayofficial)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=flat\&logo=linkedin\&logoColor=white)](https://www.linkedin.com/company/chatterpay)
+[![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?style=flat\&logo=facebook\&logoColor=white)](https://www.facebook.com/chatterpay)
+[![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=flat\&logo=youtube\&logoColor=white)](https://www.youtube.com/@chatterpay)
+[![WhatsApp Community](https://img.shields.io/badge/WhatsApp%20Community-25D366.svg?style=flat\&logo=whatsapp\&logoColor=white)](https://chat.whatsapp.com/HZJrBEUYyoF8FtchfJhzmZ)

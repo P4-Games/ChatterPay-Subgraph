@@ -1,1 +1,4 @@
-SCROLL_SEPOLIA_RPC=https://scroll-sepolia.g.alchemy.com/v2/YOUR_API_KEY
+GRAPH_NODE=http://localhost:8000
+NETWORK=scroll-sepolia | scroll
+NETWORK_RPC=https://sepolia-rpc.scroll.io | https://rpc.scroll.io
+
