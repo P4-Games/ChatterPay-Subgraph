@@ -5,22 +5,24 @@ import {
   clearStore,
   beforeAll,
   afterAll,
-  newMockEvent,
-  createMockedFunction
+  newMockEvent
 } from "matchstick-as/assembly/index"
 import { Address, Bytes, ethereum } from "@graphprotocol/graph-ts"
-import { 
+
+import {
   ProxyCreated,
   NewImplementation,
   DefaultTokensUpdated,
   ChatterPayAccount
 } from "../generated/schema"
-import { 
+
+import {
   ProxyCreated as ProxyCreatedEvent,
   NewImplementation as NewImplementationEvent,
   DefaultTokensUpdated as DefaultTokensUpdatedEvent
-} from "../generated/ChatterPayFactory/ChatterPayFactory"
-import { 
+} from "../generated/ChatterPayWalletFactory/ChatterPayWalletFactory"
+
+import {
   handleProxyCreated,
   handleNewImplementation,
   handleDefaultTokensUpdated
@@ -35,109 +37,99 @@ describe("ChatterPay Factory Events", () => {
     clearStore()
   })
 
+  // ---------------------------------------------------------
+  // ProxyCreated
+  // ---------------------------------------------------------
   test("ProxyCreated event handled correctly", () => {
-    // Setup test data
     let proxyAddress = Address.fromString("0x0000000000000000000000000000000000000001")
     let owner = Address.fromString("0x0000000000000000000000000000000000000002")
-    
-    // Create and handle event
-    let event = createProxyCreatedEvent(proxyAddress, owner)
+
+    let event = createProxyCreatedEvent(owner, proxyAddress)
     handleProxyCreated(event)
 
-    // Assertions
     assert.entityCount("ProxyCreated", 1)
     assert.entityCount("ChatterPayAccount", 1)
 
-    let proxyCreated = ProxyCreated.load(
-      event.transaction.hash.concatI32(event.logIndex.toI32())
-    )
+    let id = event.transaction.hash.concatI32(event.logIndex.toI32())
+    let proxyCreated = ProxyCreated.load(id)
     assert.assertNotNull(proxyCreated)
-    assert.bytesEquals(proxyCreated!.proxy, Bytes.fromHexString(proxyAddress.toHexString()))
+    assert.bytesEquals(proxyCreated!.proxy, proxyAddress)
 
-    let account = ChatterPayAccount.load(
-      Bytes.fromHexString(proxyAddress.toHexString())
-    )
+    let account = ChatterPayAccount.load(Bytes.fromHexString(proxyAddress.toHexString()))
     assert.assertNotNull(account)
-    assert.bytesEquals(account!.owner, Bytes.fromHexString(owner.toHexString()))
+    assert.bytesEquals(account!.owner, owner)
   })
 
+  // ---------------------------------------------------------
+  // NewImplementation
+  // ---------------------------------------------------------
   test("NewImplementation event handled correctly", () => {
-    // Setup test data
     let implementation = Address.fromString("0x0000000000000000000000000000000000000003")
-    
-    // Create and handle event
+
     let event = createNewImplementationEvent(implementation)
     handleNewImplementation(event)
 
-    // Assertions
     assert.entityCount("NewImplementation", 1)
 
-    let newImplementation = NewImplementation.load(
-      event.transaction.hash.concatI32(event.logIndex.toI32())
-    )
+    let id = event.transaction.hash.concatI32(event.logIndex.toI32())
+    let newImplementation = NewImplementation.load(id)
     assert.assertNotNull(newImplementation)
-    assert.bytesEquals(
-      newImplementation!.implementation,
-      Bytes.fromHexString("0x0000000000000000000000000000000000000003")
-    )
+    assert.bytesEquals(newImplementation!.implementation, implementation)
   })
 
+  // ---------------------------------------------------------
+  // DefaultTokensUpdated
+  // ---------------------------------------------------------
   test("DefaultTokensUpdated event handled correctly", () => {
-    // Setup test data
     let tokens = [Address.fromString("0x0000000000000000000000000000000000000004")]
     let priceFeeds = [Address.fromString("0x0000000000000000000000000000000000000005")]
-    
-    // Create and handle event
+
     let event = createDefaultTokensUpdatedEvent(tokens, priceFeeds)
     handleDefaultTokensUpdated(event)
 
-    // Assertions
     assert.entityCount("DefaultTokensUpdated", 1)
 
-    let defaultTokensUpdated = DefaultTokensUpdated.load(
-      event.transaction.hash.concatI32(event.logIndex.toI32())
-    )
+    let id = event.transaction.hash.concatI32(event.logIndex.toI32())
+    let defaultTokensUpdated = DefaultTokensUpdated.load(id)
     assert.assertNotNull(defaultTokensUpdated)
-    assert.i32Equals(defaultTokensUpdated!.oldTokens.length, 1)
-    assert.i32Equals(defaultTokensUpdated!.newTokens.length, 1)
-    assert.bytesEquals(
-      defaultTokensUpdated!.oldTokens[0],
-      Bytes.fromHexString("0x0000000000000000000000000000000000000004")
-    )
-    assert.bytesEquals(
-      defaultTokensUpdated!.newTokens[0],
-      Bytes.fromHexString("0x0000000000000000000000000000000000000005")
-    )
+    assert.i32Equals(defaultTokensUpdated!.tokens.length, 1)
+    assert.i32Equals(defaultTokensUpdated!.priceFeeds.length, 1)
+    assert.bytesEquals(defaultTokensUpdated!.tokens[0], tokens[0])
+    assert.bytesEquals(defaultTokensUpdated!.priceFeeds[0], priceFeeds[0])
   })
 })
 
-// Helper functions to create test events
-function createProxyCreatedEvent(
-  proxyAddress: Address,
-  owner: Address
-): ProxyCreatedEvent {
-  let event = changetype<ProxyCreatedEvent>(newMockEvent())
-  event.parameters = new Array()
+// ---------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------
+
+function createProxyCreatedEvent(owner: Address, proxy: Address): ProxyCreatedEvent {
+  let mockEvent = newMockEvent()
+  mockEvent.address = Address.fromString("0x00000000000000000000000000000000000000aa")
+
+  // @ts-ignore
+  let event = changetype<ProxyCreatedEvent>(mockEvent)
+  event.parameters = new Array<ethereum.EventParam>()
   event.parameters.push(
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner))
   )
   event.parameters.push(
-    new ethereum.EventParam("proxyAddress", ethereum.Value.fromAddress(proxyAddress))
+    new ethereum.EventParam("proxyAddress", ethereum.Value.fromAddress(proxy))
   )
+
   return event
 }
 
-function createNewImplementationEvent(
-  implementation: Address
-): NewImplementationEvent {
-  let event = changetype<NewImplementationEvent>(newMockEvent())
-  event.parameters = new Array()
+function createNewImplementationEvent(implementation: Address): NewImplementationEvent {
+  let mockEvent = newMockEvent()
+
+  // @ts-ignore
+  let event = changetype<NewImplementationEvent>(mockEvent)
+  event.parameters = new Array<ethereum.EventParam>()
   event.parameters.push(
-    new ethereum.EventParam(
-      "_walletImplementation",
-      ethereum.Value.fromAddress(implementation)
-    )
+    new ethereum.EventParam("_walletImplementation", ethereum.Value.fromAddress(implementation))
   )
+
   return event
 }
 
@@ -145,13 +137,17 @@ function createDefaultTokensUpdatedEvent(
   tokens: Address[],
   priceFeeds: Address[]
 ): DefaultTokensUpdatedEvent {
-  let event = changetype<DefaultTokensUpdatedEvent>(newMockEvent())
-  event.parameters = new Array()
+  let mockEvent = newMockEvent()
+
+  // @ts-ignore
+  let event = changetype<DefaultTokensUpdatedEvent>(mockEvent)
+  event.parameters = new Array<ethereum.EventParam>()
   event.parameters.push(
     new ethereum.EventParam("tokens", ethereum.Value.fromAddressArray(tokens))
   )
   event.parameters.push(
     new ethereum.EventParam("priceFeeds", ethereum.Value.fromAddressArray(priceFeeds))
   )
+
   return event
-} 
+}
