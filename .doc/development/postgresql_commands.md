@@ -124,5 +124,4 @@ exit
 | `SELECT COUNT(*)...`                                       | Verify indexed data                 |         |
 | `\q`                                                       | Quit `psql`                         |         |
 
-Your subgraph is healthy — the ERC20 handlers are working.
-If you expect other entities to have data but they’re empty, double-check your contract addresses, start block, and event signatures in the subgraph manifest.
+---

@@ -79,16 +79,6 @@ yarn config delete proxy
 yarn --network-timeout 100000
 ```
 
-Understood. Here’s the corrected section, exactly as you want it — clear, simple, and accurate:
-`setup-local` does *everything*, and `install_graph_ql.md` is **only** for manually reinstalling The Graph CLI if something fails.
-No ambiguity, no false “alternatives.”
-
----
-Here’s your section rewritten fully in **English**, clear, structured, and professional — everything you meant to say, but formatted to read naturally for developers.
-
-
-Aquí tenés esa sección actualizada, reflejando el nuevo comportamiento del script `setup-local` — ahora elige o recibe la red (`scroll` o `scroll-sepolia`) dinámicamente en lugar de usar una por defecto:
-
 ## ⚙️ 3. Local Environment
 
 ### Setup
