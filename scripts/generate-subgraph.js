@@ -1,9 +1,17 @@
 #!/usr/bin/env node
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
+/**
+ * @file generate-subgraph.ts
+ * @description Generates the subgraph.yaml file from a template and networks.json configuration.
+ */
 
-async function askNetwork() {
+import fs from "fs";
+import path from "path";
+import readline from "readline";
+
+/**
+ * Prompt user to select a network interactively
+ */
+async function askNetwork(): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -16,8 +24,11 @@ async function askNetwork() {
   });
 }
 
+/**
+ * Generate subgraph.yaml file from template and network config
+ */
 (async () => {
-  let networkArg = process.argv[2];
+  let networkArg: string | undefined = process.argv[2];
 
   // Ask interactively if not provided
   if (!networkArg) {
@@ -25,7 +36,8 @@ async function askNetwork() {
   }
 
   // Validate network name
-  if (!["scroll", "scroll-sepolia"].includes(networkArg)) {
+  const validNetworks = ["scroll", "scroll-sepolia"];
+  if (!validNetworks.includes(networkArg)) {
     console.error("❌ Invalid network. Must be 'scroll' or 'scroll-sepolia'.");
     process.exit(1);
   }
@@ -44,8 +56,25 @@ async function askNetwork() {
     process.exit(1);
   }
 
-  const networks = JSON.parse(fs.readFileSync(networksPath, "utf8"));
+  // Define interfaces for networks.json structure
+  interface NetworkConfig {
+    startBlock: number;
+    contracts: {
+      factoryAddress: string;
+    };
+    tokens: {
+      usdt: string;
+      weth: string;
+    };
+  }
+
+  interface NetworksFile {
+    [key: string]: NetworkConfig;
+  }
+
+  const networks: NetworksFile = JSON.parse(fs.readFileSync(networksPath, "utf8"));
   const cfg = networks[networkArg];
+
   if (!cfg) {
     console.error(`❌ Network "${networkArg}" not found in networks.json`);
     process.exit(1);
@@ -69,7 +98,7 @@ async function askNetwork() {
   console.log(`✅ Generated subgraph.yaml for network: ${networkArg}`);
   console.log(`→ ${outputPath}`);
 
-  // Sanity checks for ABI paths
+  // Sanity check for ABI paths
   const abiPaths = [
     "./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json",
     "./abis/ERC20.sol/ERC20.json",

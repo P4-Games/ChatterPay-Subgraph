@@ -13,7 +13,7 @@ Use this environment to test your deployment in **The Graph Studio** before goin
    * Token addresses (e.g., USDT, WETH)
 
    ⚙️ These values are **not used directly** during deployment.
-   The script `generate-subgraph.js` reads them to produce a final `subgraph.yaml` for the selected network (`scroll` or `scroll-sepolia`).
+   The script `generate-subgraph.ts` reads them to produce a final `subgraph.yaml` for the selected network (`scroll` or `scroll-sepolia`).
 
 2. Obtain a **Deploy Key** from your subgraph dashboard at
    [https://thegraph.com/studio/](https://thegraph.com/studio/)
@@ -73,7 +73,7 @@ For the live deployment powering **ChatterPay** in production.
 2. Regenerate and rebuild the subgraph for the production network:
 
 ```bash
-node scripts/generate-subgraph.js scroll
+node scripts/generate-subgraph.ts scroll
 graph codegen
 graph build
 ```
@@ -105,13 +105,13 @@ graph deploy chatterpay-subgraph \
 | ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | **Smart Contract Redeployed**                   | Update ABI and contract address in `/abis` and `networks.json`, then rebuild and redeploy.   |
 | **New Token Added**                             | Add the token’s address to `networks.json`, regenerate and rebuild the subgraph.             |
-| **Mapping Logic Changed (`src/chatterpay.ts`)** | Run `generate-subgraph.js`, `graph codegen`, and `graph build`.                              |
-| **Environment Change (Sepolia → Mainnet)**      | Regenerate the subgraph with the correct network: `node scripts/generate-subgraph.js scroll` |
+| **Mapping Logic Changed (`src/chatterpay.ts`)** | Run `generate-subgraph.ts`, `graph codegen`, and `graph build`.                              |
+| **Environment Change (Sepolia → Mainnet)**      | Regenerate the subgraph with the correct network: `node scripts/generate-subgraph.ts scroll` |
 
 ---
 
 ### ✅ Summary
 
 * `networks.json` only **defines contract and token configurations** for each network.
-* `generate-subgraph.js` uses it to **create the final `subgraph.yaml`** according to the selected network.
+* `generate-subgraph.ts` uses it to **create the final `subgraph.yaml`** according to the selected network.
 * The file `subgraph.yaml` is what actually gets deployed to **The Graph Studio** and determines which chain is indexed.

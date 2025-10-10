@@ -1,12 +1,15 @@
 #!/usr/bin/env ts-node
 /**
- * 🛠️ ChatterPay Subgraph Setup Script
- * ----------------------------------
- * Prepara el entorno local completo para The Graph.
- * - Verifica dependencias (Docker, Compose, Graph CLI, libpq)
- * - Levanta los contenedores locales
- * - Genera el subgraph.yaml y schema.graphql
- * - Compila, crea y despliega el subgraph local
+ * 💀 ChatterPay Subgraph Setup Script (Clean Mode)
+ * ------------------------------------------------
+ * Completely resets and rebuilds the local Graph environment.
+ * - Stops and removes all Docker containers
+ * - Cleans up volumes and networks
+ * - Checks for required dependencies
+ * - Starts local Graph Node stack
+ * - Waits for Graph Node and IPFS to be ready
+ * - Generates subgraph.yaml
+ * - Builds and deploys the subgraph locally
  */
 
 import { execSync } from "child_process";
@@ -17,14 +20,14 @@ import readline from "readline";
 const log = (msg: string) => console.log(chalk.cyan(`→ ${msg}`));
 const ok = (msg: string) => console.log(chalk.green(`✔ ${msg}`));
 const warn = (msg: string) => console.log(chalk.yellow(`⚠ ${msg}`));
-const error = (msg: string) => console.log(chalk.red(`✖ ${msg}`));
+const fail = (msg: string) => console.log(chalk.red(`✖ ${msg}`));
 
 function run(command: string, desc?: string) {
   try {
     if (desc) log(desc);
     execSync(command, { stdio: "inherit" });
-  } catch (e) {
-    error(`Command failed: ${command}`);
+  } catch {
+    fail(`Command failed: ${command}`);
     process.exit(1);
   }
 }
@@ -38,6 +41,25 @@ function checkCommand(cmd: string): boolean {
   }
 }
 
+/**
+ * 💣 Stop and remove everything Docker-related
+ */
+function nukeDocker() {
+  log("Stopping and removing all Docker containers...");
+  try {
+    execSync("docker ps -q | xargs -r docker stop", { stdio: "ignore" });
+    execSync("docker ps -aq | xargs -r docker rm -f", { stdio: "ignore" });
+    execSync("docker volume prune -f", { stdio: "ignore" });
+    execSync("docker network prune -f", { stdio: "ignore" });
+    ok("All Docker containers, volumes, and networks removed ✅");
+  } catch {
+    warn("Failed to completely clean Docker environment, continuing anyway...");
+  }
+}
+
+/**
+ * Install libpq if missing (required by Matchstick)
+ */
 function installLibpq() {
   const platform = os.platform();
   log("Checking PostgreSQL client library (libpq) for Matchstick...");
@@ -47,7 +69,7 @@ function installLibpq() {
     ok("libpq already installed ✅");
     return;
   } catch {
-    warn("libpq not found, installing...");
+    warn("libpq not found, attempting installation...");
   }
 
   if (platform === "linux") {
@@ -59,43 +81,52 @@ function installLibpq() {
       } else if (checkCommand("pacman")) {
         run("sudo pacman -S --noconfirm postgresql-libs", "Installing PostgreSQL libs via pacman...");
       } else {
-        warn("Could not detect package manager. Please install libpq manually.");
+        warn("No supported package manager detected. Install libpq manually.");
       }
     } catch {
-      error("Failed to install libpq. Install manually: sudo apt install libpq-dev");
+      fail("Failed to install libpq. Run manually: sudo apt install libpq-dev");
     }
   } else if (platform === "darwin") {
     run("brew install libpq", "Installing libpq via Homebrew...");
   } else {
-    warn("Non-Linux platform detected. Please ensure libpq is installed manually.");
+    warn("Unsupported OS. Please install libpq manually.");
   }
 
   ok("libpq installation step completed ✅");
 }
 
-function waitForGraphNode() {
-  log("Waiting for Graph Node to be ready on http://localhost:8020 ...");
+/**
+ * Wait until a service is reachable
+ */
+function waitForService(name: string, url: string, successMsg: string) {
+  log(`Waiting for ${name} to respond on ${url} ...`);
   const maxAttempts = 25;
+
   for (let i = 1; i <= maxAttempts; i++) {
     try {
-      execSync("curl -s -o /dev/null -w '%{http_code}' http://localhost:8020", {
-        stdio: "pipe",
-      });
-      ok(`Graph Node is responding (attempt ${i}) ✅`);
+      execSync(`curl -s -o /dev/null -w '%{http_code}' ${url}`, { stdio: "pipe" });
+      ok(`${successMsg} (attempt ${i}) ✅`);
       return;
     } catch {
-      warn(`Graph Node not ready yet (attempt ${i}/${maxAttempts})...`);
+      warn(`${name} not ready yet (${i}/${maxAttempts})...`);
       execSync("sleep 3");
     }
   }
-  error("Graph Node did not become ready after several attempts.");
+
+  fail(`${name} did not become ready after several attempts.`);
   process.exit(1);
 }
 
+/**
+ * Main setup process
+ */
 async function main() {
-  console.log(chalk.magenta.bold("\n🚀 Setting up ChatterPay Subgraph local environment\n"));
+  console.log(chalk.magenta.bold("\n🚀 Setting up ChatterPay Subgraph (Clean Environment)\n"));
 
-  // 1️⃣ Ask for network if not provided
+  // 0️⃣ Kill all containers first
+  nukeDocker();
+
+  // 1️⃣ Ask for network
   const networkArg = process.argv[2];
   let network = networkArg;
   if (!network) {
@@ -109,25 +140,25 @@ async function main() {
   }
 
   if (!["scroll", "scroll-sepolia"].includes(network)) {
-    error("Invalid network. Must be 'scroll' or 'scroll-sepolia'.");
+    fail("Invalid network. Must be 'scroll' or 'scroll-sepolia'.");
     process.exit(1);
   }
 
-  // 2️⃣ Check Docker
+  // 2️⃣ Docker
   if (!checkCommand("docker")) {
-    error("Docker is not installed or not in PATH.");
-    console.log("Install Docker first: https://docs.docker.com/get-docker/");
+    fail("Docker is not installed or missing from PATH.");
+    console.log("Install Docker: https://docs.docker.com/get-docker/");
     process.exit(1);
   }
-  ok("Docker is installed ✅");
+  ok("Docker found ✅");
 
-  // 3️⃣ Check Compose
+  // 3️⃣ Docker Compose
   if (!checkCommand("docker-compose") && !checkCommand("docker compose")) {
-    error("Docker Compose is not installed.");
-    console.log("Install it: https://docs.docker.com/compose/install/");
+    fail("Docker Compose not found.");
+    console.log("Install: https://docs.docker.com/compose/install/");
     process.exit(1);
   }
-  ok("Docker Compose is available ✅");
+  ok("Docker Compose available ✅");
 
   // 4️⃣ Graph CLI
   if (!checkCommand("graph")) {
@@ -140,14 +171,15 @@ async function main() {
   // 5️⃣ libpq
   installLibpq();
 
-  // 6️⃣ Start Docker containers
+  // 6️⃣ Start containers
   run("docker compose up -d", "Starting local Graph Node stack (Postgres, IPFS, Graph Node)...");
 
-  // 7️⃣ Wait for readiness
-  waitForGraphNode();
+  // 7️⃣ Wait for Graph Node and IPFS
+  waitForService("Graph Node", "http://localhost:8020", "Graph Node is ready");
+  waitForService("IPFS", "http://localhost:5001/api/v0/version", "IPFS is ready");
 
   // 8️⃣ Generate subgraph.yaml
-  run(`node scripts/generate-subgraph.js ${network}`, `Generating subgraph.yaml for ${network}...`);
+  run(`ts-node scripts/generate-subgraph.ts ${network}`, `Generating subgraph.yaml for ${network}...`);
 
   // 9️⃣ Codegen
   run("graph codegen", "Running graph codegen...");
@@ -155,7 +187,7 @@ async function main() {
   // 🔟 Build
   run("graph build", "Building subgraph...");
 
-  // 1️⃣1️⃣ Create if not exists
+  // 1️⃣1️⃣ Create (ignore if already exists)
   try {
     run("graph create --node http://localhost:8020 chatterpay-subgraph", "Creating local subgraph...");
   } catch {
@@ -164,13 +196,14 @@ async function main() {
 
   // 1️⃣2️⃣ Deploy
   const version = `v${new Date().toISOString().replace(/[-:T.Z]/g, "").slice(0, 8)}`;
+  const ipfsHost = process.env.IPFS_HOST ?? "http://localhost:5001";
   run(
-    `graph deploy chatterpay-subgraph --node http://localhost:8020 --ipfs http://localhost:5001 --version-label ${version}`,
-    `Deploying subgraph to local Graph Node (${network}, version ${version})...`
+    `graph deploy chatterpay-subgraph --node http://localhost:8020 --ipfs ${ipfsHost} --version-label ${version}`,
+    `Deploying subgraph (${network}, version ${version})...`
   );
 
   ok("Subgraph deployed successfully!");
-  console.log(chalk.magentaBright("\n🌐 Open your GraphQL playground at:"));
+  console.log(chalk.magentaBright("\n🌐 GraphQL Playground available at:"));
   console.log(chalk.bold("   http://localhost:8000/subgraphs/name/chatterpay-subgraph/graphql\n"));
 }
 

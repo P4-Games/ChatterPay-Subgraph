@@ -6,7 +6,7 @@
   "version": "2.0.0",
   "description": "Crypto at a message's distance!",
   "scripts": {
-    "generate": "node scripts/generate-subgraph.js",
+    "generate": "ts-node scripts/generate-subgraph.ts",
     "codegen": "graph codegen && ts-node scripts/fix-generated-code.ts",
     "build": "graph build",
     "create-local": "graph create --node http://localhost:8020 chatterpay-subgraph",
