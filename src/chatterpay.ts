@@ -14,7 +14,9 @@ import {
 } from "../generated/schema"
 import { Transfer as USDTTransferEvent, Approval as USDTApprovalEvent } from "../generated/USDT/ERC20"
 import { Transfer as WETHTransferEvent, Approval as WETHApprovalEvent } from "../generated/WETH/ERC20"
-import { Bytes } from "@graphprotocol/graph-ts"
+import { Bytes, Address } from "@graphprotocol/graph-ts"
+
+const ZERO_ADDRESS = Address.fromString("0x0000000000000000000000000000000000000000")
 
 export function handleProxyCreated(event: ProxyCreatedEvent): void {
   const entity = new ProxyCreated(event.transaction.hash.concatI32(event.logIndex.toI32()))
@@ -64,6 +66,7 @@ export function handleDefaultTokensUpdated(event: DefaultTokensUpdatedEvent): vo
 }
 
 export function handleUSDTTransfer(event: USDTTransferEvent): void {
+  if (event.params.from == ZERO_ADDRESS || event.params.to == ZERO_ADDRESS) return
   const toAccount = ChatterPayAccount.load(event.params.to)
   const fromAccount = ChatterPayAccount.load(event.params.from)
 
@@ -81,6 +84,7 @@ export function handleUSDTTransfer(event: USDTTransferEvent): void {
 }
 
 export function handleWETHTransfer(event: WETHTransferEvent): void {
+  if (event.params.from == ZERO_ADDRESS || event.params.to == ZERO_ADDRESS) return
   const toAccount = ChatterPayAccount.load(event.params.to)
   const fromAccount = ChatterPayAccount.load(event.params.from)
 
