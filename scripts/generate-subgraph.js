@@ -1,34 +1,84 @@
 #!/usr/bin/env node
-import fs from "fs";
-import path from "path";
+const fs = require("fs");
+const path = require("path");
+const readline = require("readline");
 
-const [,, networkArg] = process.argv;
-if (!networkArg) {
-  console.error("❌ Missing network name. Usage: node scripts/generate-subgraph.js scroll-sepolia");
-  process.exit(1);
+async function askNetwork() {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise((resolve) => {
+    rl.question("🌐 Select network (scroll / scroll-sepolia): ", (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
 }
 
-const networksPath = path.resolve("networks.json");
-const templatePath = path.resolve("subgraph.template.yaml");
-const outputPath = path.resolve("subgraph.yaml");
+(async () => {
+  let networkArg = process.argv[2];
 
-const networks = JSON.parse(fs.readFileSync(networksPath, "utf8"));
-const cfg = networks[networkArg];
+  // Ask interactively if not provided
+  if (!networkArg) {
+    networkArg = await askNetwork();
+  }
 
-if (!cfg) {
-  console.error(`❌ Network "${networkArg}" not found in networks.json`);
-  process.exit(1);
-}
+  // Validate network name
+  if (!["scroll", "scroll-sepolia"].includes(networkArg)) {
+    console.error("❌ Invalid network. Must be 'scroll' or 'scroll-sepolia'.");
+    process.exit(1);
+  }
 
-let yaml = fs.readFileSync(templatePath, "utf8");
+  const cwd = process.cwd();
+  const networksPath = path.join(cwd, "networks.json");
+  const templatePath = path.join(cwd, "subgraph.template.yaml");
+  const outputPath = path.join(cwd, "subgraph.yaml");
 
-yaml = yaml
-  .replace(/{{NETWORK}}/g, networkArg)
-  .replace(/{{START_BLOCK}}/g, cfg.startBlock)
-  .replace(/{{FACTORY_ADDRESS}}/g, cfg.contracts.factoryAddress)
-  .replace(/{{USDT_ADDRESS}}/g, cfg.tokens.usdt);
+  if (!fs.existsSync(networksPath)) {
+    console.error(`❌ networks.json not found at ${networksPath}`);
+    process.exit(1);
+  }
+  if (!fs.existsSync(templatePath)) {
+    console.error(`❌ subgraph.template.yaml not found at ${templatePath}`);
+    process.exit(1);
+  }
 
-fs.writeFileSync(outputPath, yaml);
+  const networks = JSON.parse(fs.readFileSync(networksPath, "utf8"));
+  const cfg = networks[networkArg];
+  if (!cfg) {
+    console.error(`❌ Network "${networkArg}" not found in networks.json`);
+    process.exit(1);
+  }
 
-console.log(`✅ Generated subgraph.yaml for network: ${networkArg}`);
-console.log(`→ ${outputPath}`);
+  const START_BLOCK = String(cfg.startBlock);
+  const FACTORY_ADDRESS = cfg.contracts.factoryAddress;
+  const USDT_ADDRESS = cfg.tokens.usdt;
+  const WETH_ADDRESS = cfg.tokens.weth;
+
+  let yaml = fs.readFileSync(templatePath, "utf8");
+
+  yaml = yaml
+    .replace(/{{NETWORK}}/g, networkArg)
+    .replace(/{{START_BLOCK}}/g, START_BLOCK)
+    .replace(/{{FACTORY_ADDRESS}}/g, FACTORY_ADDRESS)
+    .replace(/{{USDT_ADDRESS}}/g, USDT_ADDRESS)
+    .replace(/{{WETH_ADDRESS}}/g, WETH_ADDRESS);
+
+  fs.writeFileSync(outputPath, yaml, "utf8");
+  console.log(`✅ Generated subgraph.yaml for network: ${networkArg}`);
+  console.log(`→ ${outputPath}`);
+
+  // Sanity checks for ABI paths
+  const abiPaths = [
+    "./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json",
+    "./abis/ERC20.sol/ERC20.json",
+  ];
+
+  for (const p of abiPaths) {
+    const fullPath = path.join(cwd, p);
+    if (!fs.existsSync(fullPath)) {
+      console.warn(`⚠️ ABI not found: ${p}`);
+    }
+  }
+})();
