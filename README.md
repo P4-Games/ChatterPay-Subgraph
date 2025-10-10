@@ -56,7 +56,7 @@ Make sure the following are installed on your system:
 | **Node.js** (≥ 18.x) & **npm** | core JavaScript runtime | comes with nvm |
 | **Yarn** (optional but recommended) | dependency manager | `npm install -g yarn` |
 | **Docker + Docker Compose** | runs the local Graph Node, IPFS, and Postgres | [Install Docker](https://docs.docker.com/get-docker/) |
-| **The Graph CLI** | main CLI tool for subgraphs | see [.doc/development/install_graph_ql.md](./.doc/development/install_graph_ql.md) |
+| **The Graph CLI** | main CLI tool for subgraphs | see [.doc/development/install_graph_cli.md](./.doc/development/install_graph_cli.md) |
 
 ## 📥 2. Clone and install dependencies
 
@@ -118,7 +118,7 @@ yarn setup-local scroll-sepolia
 ```
 
 If you encounter issues specifically with **The Graph CLI** installation, you can manually reinstall or fix it following:
-➡️ [./.doc/development/install_graph_ql.md](./.doc/development/install_graph_ql.md)
+➡️ [./.doc/development/install_graph_cli.md](./.doc/development/install_graph_cli.md)
 
 
 ### Working with data
