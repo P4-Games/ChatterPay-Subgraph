@@ -1,0 +1,93 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+
+dataSources:
+  # ============================================================
+  # ChatterPay Wallet Factory
+  # ============================================================
+  - kind: ethereum
+    name: ChatterPayWalletFactory
+    network: {{NETWORK}}
+    source:
+      address: "{{FACTORY_ADDRESS}}"
+      abi: ChatterPayWalletFactory
+      startBlock: {{START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayAccount
+        - ProxyCreated
+        - NewImplementation
+        - DefaultTokensUpdated
+      abis:
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: ProxyCreated(indexed address,indexed address)
+          handler: handleProxyCreated
+        - event: NewImplementation(indexed address)
+          handler: handleNewImplementation
+        - event: DefaultTokensUpdated(address[],address[])
+          handler: handleDefaultTokensUpdated
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # USDT ERC20
+  # ============================================================
+  - kind: ethereum
+    name: USDT
+    network: {{NETWORK}}
+    source:
+      address: "{{USDT_ADDRESS}}"
+      abi: ERC20
+      startBlock: {{START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - USDTApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleUSDTTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleUSDTApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # WETH ERC20
+  # ============================================================
+  - kind: ethereum
+    name: WETH
+    network: {{NETWORK}}
+    source:
+      address: "{{WETH_ADDRESS}}"
+      abi: ERC20
+      startBlock: {{START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - WETHApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleWETHTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleWETHApproval
+      file: ./src/chatterpay.ts
