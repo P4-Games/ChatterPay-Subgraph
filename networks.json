@@ -1,8 +1,50 @@
 {
   "scroll": {
+    "name": "Scroll",
+    "environment": "PRODUCTION",
     "chainId": 534352,
     "rpc": "https://rpc.scroll.io",
     "explorer": "https://scrollscan.com",
-    "startBlock": 15400000
+    "startBlock": 12894466,
+    "contracts": {
+      "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+      "factoryAddress": "0xf3C022440b32e594F846f0E365Ef18Dc0059F5Af",
+      "chatterPayAddress": "0x6fC45bB6e052c4C8Bc4d4c629c3388097A41a3df",
+      "chatterNFTAddress": "0x2E5E6e9eb4C88dF5d340f41aF5E535cd55B9d3cC",
+      "paymasterAddress": "0xAbb6b63B2C47D1D265F698AfEAFb92C736CC78cf",
+      "routerAddress": "0xfc30937f5cDe93Df8d48aCAF7e6f5D8D8A31F636",
+      "chatterpayImplementationAddress": "0x66Eaf347aE03237eF1b9A5E5E38E9Fd0501e431a",
+      "poolAddress": "0x138182900d26Adf6272b357faEf77757349165A1",
+      "quoterAddress": "0x2566e082Cb1656d22BCbe5644F5b997D194b5299"
+    },
+    "tokens": {
+      "weth": "0x5300000000000000000000000000000000000004",
+      "usdt": "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df",
+      "wbtc": "0x3C1BCa5a656e69edCD0D4E36BEbb3FcDAcA60Cf1"
+    }
+  },
+  "scroll-sepolia": {
+    "name": "Scroll Sepolia",
+    "environment": "TEST",
+    "chainId": 534351,
+    "rpc": "${SCROLL_SEPOLIA_RPC}",
+    "explorer": "https://sepolia.scrollscan.dev",
+    "startBlock": 13595214,
+    "contracts": {
+      "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+      "factoryAddress": "0x489aa621F1C441568b82e428Ae9791EbE099E5B7",
+      "chatterPayAddress": "0x727Ad23b49f540E6bDDD2e9024992A565b04bA15",
+      "chatterNFTAddress": "0x99492592EF9233C160abb96De2f41102822E431b",
+      "paymasterAddress": "0xAA9364030dDc7Ee339Fd03809E397E7ae78ecD21",
+      "routerAddress": "0x17AFD0263D6909Ba1F9a8EAC697f76532365Fb95",
+      "chatterpayImplementationAddress": "0x9f95fF1a5741713A20464e18b7F73704E7b307E8",
+      "poolAddress": "",
+      "quoterAddress": "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2"
+    },
+    "tokens": {
+      "weth": "0xC262f22bb6da71fC14c8914f0A3DC02e7bf6E5b0",
+      "usdt": "0x776133ea03666b73a8e3FC23f39f90e66360716E",
+      "wbtc": "0x987267c441f6e77b8034A65652FE0594dB81792c"
+    }
   }
 }
