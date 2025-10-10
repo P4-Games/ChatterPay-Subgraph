@@ -1,24 +1,35 @@
 {
   "name": "chatterpay-subgraph",
   "license": "MIT",
-  "private": false,
-  "author": "P4-games",
-  "version": "1.0.0",
+  "private": true,
+  "author": "ChatterPay Team",
+  "version": "2.0.0",
   "description": "Crypto at a message's distance!",
   "scripts": {
-    "codegen": "graph codegen",
+    "generate": "node scripts/generate-subgraph.js",
+    "codegen": "graph codegen && ts-node scripts/fix-generated-code.ts",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ balances-scroll",
-    "create-local": "graph create --node http://localhost:8020/ balances-scroll",
-    "remove-local": "graph remove --node http://localhost:8020/ balances-scroll",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 balances-scroll",
-    "test": "graph test"
+    "create-local": "graph create --node http://localhost:8020 chatterpay-subgraph",
+    "remove-local": "graph remove --node http://localhost:8020 chatterpay-subgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020 --ipfs http://localhost:5001 chatterpay-subgraph",
+    "setup-local": "ts-node scripts/setup-local.ts",
+    "local-monitoring": "docker logs subgraph-graph-node-1 | tail -n 50",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ chatterpay-subgraph",
+    "test": "graph test",
+    "docker-up": "docker compose up -d",
+    "docker-down": "docker compose down",
+    "docker-reset": "docker compose down -v",
+    "docker-logs": "docker compose logs -f graph-node"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.97.1",
-    "@graphprotocol/graph-ts": "0.32.0"
+    "@graphprotocol/graph-ts": "0.38.1"
   },
   "devDependencies": {
-    "matchstick-as": "^0.6.0"
+    "@types/node": "^24.7.1",
+    "chalk": "^5.6.2",
+    "matchstick-as": "^0.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
