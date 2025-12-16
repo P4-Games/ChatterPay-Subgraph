@@ -8,7 +8,7 @@
     "startBlock": 15400500,
     "contracts": {
       "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
-       "factoryAddresses": [
+      "factoryAddresses": [
         "0x3001357efbE5B50a9c93462A0e81480Ef77091E1",
         "0xE17Ca047427557C3bdeD9d151a823D8e2B514e74",
         "0x18F1978f64cbE69DF8B46934DD2f4Abb30268fD1",
@@ -25,7 +25,13 @@
     "tokens": {
       "weth": "0x5300000000000000000000000000000000000004",
       "usdt": "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df",
-      "wbtc": "0x3C1BCa5a656e69edCD0D4E36BEbb3FcDAcA60Cf1"
+      "wbtc": "0x3C1BCa5a656e69edCD0D4E36BEbb3FcDAcA60Cf1",
+      "scr": "0xd29687c813d741e2f938f4ac377128810e217b1b",
+      "usdc": "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
+      "wsteth": "0xf610A9dfB7C89644979b4A0f27063E9e7d7Cda32",
+      "usx": "0x3b005fefC63Ca7c8d25eE21FbA3787229ba4CF03",
+      "stakedusx": "0xcB14BcdF6cD483665D10dfD6f87d908996C7F922",
+      "usdq": "0xdb9e8f82d6d45fff803161f2a5f75543972b229a"
     }
   },
   "scroll-sepolia": {
@@ -37,7 +43,7 @@
     "startBlock": 10000000,
     "contracts": {
       "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
-       "factoryAddresses": [
+      "factoryAddresses": [
         "0x489aa621F1C441568b82e428Ae9791EbE099E5B7",
         "0x66978dF0ca47566598FB9b8F2Ad3692baF01d9C2",
         "0x23B25e002cd702F53a2cA740106f238E54a5a673",
