@@ -34,7 +34,9 @@ function run(command: string, desc?: string) {
 
 function checkCommand(cmd: string): boolean {
   try {
-    execSync(`command -v ${cmd}`, { stdio: "ignore" });
+    const isWindows = os.platform() === "win32";
+    const checkCmd = isWindows ? `where ${cmd}` : `command -v ${cmd}`;
+    execSync(checkCmd, { stdio: "ignore" });
     return true;
   } catch {
     return false;
@@ -47,8 +49,20 @@ function checkCommand(cmd: string): boolean {
 function nukeDocker() {
   log("Stopping and removing all Docker containers...");
   try {
-    execSync("docker ps -q | xargs -r docker stop", { stdio: "ignore" });
-    execSync("docker ps -aq | xargs -r docker rm -f", { stdio: "ignore" });
+    const isWindows = os.platform() === "win32";
+    if (isWindows) {
+      // Windows PowerShell commands
+      try {
+        execSync('docker ps -q | ForEach-Object { docker stop $_ }', { stdio: "ignore", shell: "powershell.exe" });
+      } catch { }
+      try {
+        execSync('docker ps -aq | ForEach-Object { docker rm -f $_ }', { stdio: "ignore", shell: "powershell.exe" });
+      } catch { }
+    } else {
+      // Unix commands
+      execSync("docker ps -q | xargs -r docker stop", { stdio: "ignore" });
+      execSync("docker ps -aq | xargs -r docker rm -f", { stdio: "ignore" });
+    }
     execSync("docker volume prune -f", { stdio: "ignore" });
     execSync("docker network prune -f", { stdio: "ignore" });
     ok("All Docker containers, volumes, and networks removed ✅");
@@ -62,6 +76,12 @@ function nukeDocker() {
  */
 function installLibpq() {
   const platform = os.platform();
+
+  if (platform === "win32") {
+    warn("Windows detected - libpq installation skipped (not required on Windows)");
+    return;
+  }
+
   log("Checking PostgreSQL client library (libpq) for Matchstick...");
 
   try {
@@ -101,15 +121,22 @@ function installLibpq() {
 function waitForService(name: string, url: string, successMsg: string) {
   log(`Waiting for ${name} to respond on ${url} ...`);
   const maxAttempts = 25;
+  const isWindows = os.platform() === "win32";
 
   for (let i = 1; i <= maxAttempts; i++) {
     try {
-      execSync(`curl -s -o /dev/null -w '%{http_code}' ${url}`, { stdio: "pipe" });
+      const curlCmd = isWindows
+        ? `curl -s -o nul -w "%{http_code}" ${url}`
+        : `curl -s -o /dev/null -w '%{http_code}' ${url}`;
+      execSync(curlCmd, { stdio: "pipe" });
       ok(`${successMsg} (attempt ${i}) ✅`);
       return;
     } catch {
       warn(`${name} not ready yet (${i}/${maxAttempts})...`);
-      execSync("sleep 3");
+      const sleepCmd = isWindows ? "timeout /t 3 /nobreak >nul" : "sleep 3";
+      try {
+        execSync(sleepCmd, { stdio: "ignore" });
+      } catch { }
     }
   }
 
@@ -153,7 +180,17 @@ async function main() {
   ok("Docker found ✅");
 
   // 3️⃣ Docker Compose
-  if (!checkCommand("docker-compose") && !checkCommand("docker compose")) {
+  const hasDockerCompose = checkCommand("docker-compose");
+  const hasDockerComposeV2 = checkCommand("docker") && (() => {
+    try {
+      execSync("docker compose version", { stdio: "ignore" });
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+
+  if (!hasDockerCompose && !hasDockerComposeV2) {
     fail("Docker Compose not found.");
     console.log("Install: https://docs.docker.com/compose/install/");
     process.exit(1);
