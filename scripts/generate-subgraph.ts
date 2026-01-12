@@ -61,6 +61,13 @@ async function askNetwork(): Promise<string> {
     tokens: {
       usdt: string;
       weth: string;
+      wbtc: string;
+      scr: string;
+      usdc: string;
+      wsteth: string;
+      usx: string;
+      stakedusx: string;
+      usdq: string;
     };
   }
 
@@ -79,13 +86,20 @@ async function askNetwork(): Promise<string> {
   const START_BLOCK = String(cfg.startBlock);
   const USDT_ADDRESS = cfg.tokens.usdt;
   const WETH_ADDRESS = cfg.tokens.weth;
+  const WBTC_ADDRESS = cfg.tokens.wbtc;
+  const SCR_ADDRESS = cfg.tokens.scr;
+  const USDC_ADDRESS = cfg.tokens.usdc;
+  const WSTETH_ADDRESS = cfg.tokens.wsteth;
+  const USX_ADDRESS = cfg.tokens.usx;
+  const STAKEDUSX_ADDRESS = cfg.tokens.stakedusx;
+  const USDQ_ADDRESS = cfg.tokens.usdq;
 
   // Normalize factory addresses to an array
   const factoryAddresses: string[] = Array.isArray(cfg.contracts.factoryAddresses)
     ? cfg.contracts.factoryAddresses
     : cfg.contracts.factoryAddress
-    ? [cfg.contracts.factoryAddress]
-    : [];
+      ? [cfg.contracts.factoryAddress]
+      : [];
 
   if (factoryAddresses.length === 0) {
     console.error("❌ No factoryAddress or factoryAddresses found in networks.json");
@@ -198,6 +212,209 @@ ${factorySources}
           handler: handleWETHTransfer
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleWETHApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # WBTC ERC20
+  # ============================================================
+  - kind: ethereum/contract
+    name: WBTC
+    network: ${networkArg}
+    source:
+      address: "${WBTC_ADDRESS}"
+      abi: ERC20
+      startBlock: ${START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - WBTCApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleWBTCTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleWBTCApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # SCR ERC20
+  # ============================================================
+  - kind: ethereum/contract
+    name: SCR
+    network: ${networkArg}
+    source:
+      address: "${SCR_ADDRESS}"
+      abi: ERC20
+      startBlock: ${START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - SCRApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleSCRTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleSCRApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # USDC ERC20
+  # ============================================================
+  - kind: ethereum/contract
+    name: USDC
+    network: ${networkArg}
+    source:
+      address: "${USDC_ADDRESS}"
+      abi: ERC20
+      startBlock: ${START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - USDCApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleUSDCTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleUSDCApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # wstETH ERC20
+  # ============================================================
+  - kind: ethereum/contract
+    name: wstETH
+    network: ${networkArg}
+    source:
+      address: "${WSTETH_ADDRESS}"
+      abi: ERC20
+      startBlock: ${START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - wstETHApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handlewstETHTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handlewstETHApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # USX ERC20
+  # ============================================================
+  - kind: ethereum/contract
+    name: USX
+    network: ${networkArg}
+    source:
+      address: "${USX_ADDRESS}"
+      abi: ERC20
+      startBlock: ${START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - USXApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleUSXTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleUSXApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # StakedUSX ERC20
+  # ============================================================
+  - kind: ethereum/contract
+    name: StakedUSX
+    network: ${networkArg}
+    source:
+      address: "${STAKEDUSX_ADDRESS}"
+      abi: ERC20
+      startBlock: ${START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - StakedUSXApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleStakedUSXTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleStakedUSXApproval
+      file: ./src/chatterpay.ts
+
+  # ============================================================
+  # USDQ ERC20
+  # ============================================================
+  - kind: ethereum/contract
+    name: USDQ
+    network: ${networkArg}
+    source:
+      address: "${USDQ_ADDRESS}"
+      abi: ERC20
+      startBlock: ${START_BLOCK}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChatterPayTransfer
+        - USDQApproval
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.sol/ERC20.json
+        - name: ChatterPayWalletFactory
+          file: ./abis/ChatterPayWalletFactory.sol/ChatterPayWalletFactory.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleUSDQTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleUSDQApproval
       file: ./src/chatterpay.ts
 `;
 
