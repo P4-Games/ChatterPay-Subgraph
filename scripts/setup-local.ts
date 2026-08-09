@@ -159,15 +159,15 @@ async function main() {
   if (!network) {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
     network = await new Promise<string>((resolve) => {
-      rl.question("🌐 Select network (scroll / scroll-sepolia): ", (answer) => {
+      rl.question("🌐 Select network (scroll / scroll-sepolia / arbitrum-sepolia): ", (answer) => {
         rl.close();
         resolve(answer.trim());
       });
     });
   }
 
-  if (!["scroll", "scroll-sepolia"].includes(network)) {
-    fail("Invalid network. Must be 'scroll' or 'scroll-sepolia'.");
+  if (!["scroll", "scroll-sepolia", "arbitrum-sepolia"].includes(network)) {
+    fail("Invalid network. Must be 'scroll', 'scroll-sepolia' or 'arbitrum-sepolia'.");
     process.exit(1);
   }
 
