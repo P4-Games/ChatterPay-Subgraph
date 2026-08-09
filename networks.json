@@ -68,5 +68,37 @@
       "stakedusx": "0xccb541aa288cf3d82d60261895e333E78f1F70Ca",
       "usdq": "0xaBB12F0315Bc523475eCA5CBd54aEEac3F9B983D"
     }
+  },
+  "arbitrum-sepolia": {
+    "name": "Arbitrum Sepolia",
+    "environment": "TEST",
+    "chainId": 421614,
+    "rpc": "${ARBITRUM_SEPOLIA_RPC}",
+    "explorer": "https://sepolia.arbiscan.io",
+    "startBlock": 296189337,
+    "contracts": {
+      "entryPoint": "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+      "factoryAddresses": [
+        "0x14303f0874FDd4d8719B8973c72b2f633C57B94a"
+      ],
+      "chatterPayAddress": "0x01A920937A28d82c3d756DdA9Ca3f33601adde32",
+      "chatterNFTAddress": "0xA3bF60D2dCB70cCa54e90F5b0999fE2CD9f2A9b9",
+      "paymasterAddress": "0xEdeEB46794d35C0fc1De249c9212E97AD225083B",
+      "routerAddress": "0x101F443B4d1b059569D643917553c771E1b9663E",
+      "chatterpayImplementationAddress": "0x6Bb62fde64Aaac633CF2eD35ED3aEb422BdF03a1",
+      "poolAddress": "0x12D01f6C566EA004739E7E58FA030696553a7f56",
+      "quoterAddress": "0x2779a0CC1c3e0E44D2542EC3e79e3864Ae93Ef0B"
+    },
+    "tokens": {
+      "weth": "0xE9C723D01393a437bac13CE8f925A5bc8E1c335c",
+      "usdt": "0xe6B817E31421929403040c3e42A6a5C5D2958b4A",
+      "wbtc": "0x0000000000000000000000000000000000000000",
+      "usdc": "0x8431eBc62F7B08af1bBf80eE7c85364ffc24ae24",
+      "scr": "0x0000000000000000000000000000000000000000",
+      "wsteth": "0x0000000000000000000000000000000000000000",
+      "usx": "0x0000000000000000000000000000000000000000",
+      "stakedusx": "0x0000000000000000000000000000000000000000",
+      "usdq": "0x0000000000000000000000000000000000000000"
+    }
   }
 }
