@@ -1,6 +1,8 @@
 # Implementation (Test and Production)
 
-## Test Environment (Scroll Sepolia)
+## Test Environment (Arbitrum Sepolia)
+
+> Scroll Sepolia is deprecated (no online RPC nodes) as of 2026-08. The active test network is now **Arbitrum Sepolia** (`chainId: 421614`). The `scroll-sepolia` entry is kept in `networks.json` for historical reference but is no longer deployed to. Steps below reference `arbitrum-sepolia`; swap the network arg for `scroll-sepolia` if you ever need to reproduce the old setup.
 
 Use this environment to test your deployment in **The Graph Studio** before going live.
 
@@ -13,7 +15,7 @@ Use this environment to test your deployment in **The Graph Studio** before goin
    * Token addresses (e.g., USDT, WETH)
 
    ⚙️ These values are **not used directly** during deployment.
-   The script `generate-subgraph.js` reads them to produce a final `subgraph.yaml` for the selected network (`scroll` or `scroll-sepolia`).
+   The script `generate-subgraph.js` reads them to produce a final `subgraph.yaml` for the selected network (`scroll`, `scroll-sepolia` or `arbitrum-sepolia`).
 
 2. Obtain a **Deploy Key** from your subgraph dashboard at
    [https://thegraph.com/studio/](https://thegraph.com/studio/)
@@ -30,7 +32,7 @@ graph auth <YOUR_DEPLOY_KEY>
 
 ```bash
 graph deploy <YOUR_SUBGRAPH_SLUG>
-# Example: graph deploy chatterpay-scroll-sepolia
+# Example: graph deploy chatterpay-arbitrum-sepolia
 ```
 
 5. Verify your subgraph indexing status in
@@ -39,7 +41,7 @@ graph deploy <YOUR_SUBGRAPH_SLUG>
 6. Take note of your GraphQL query endpoint — you’ll use it to connect your dApp, backend, or testing tools.
 
 Example: 
-https://api.studio.thegraph.com/query/86507/chatterpay-scroll-sepolia/version/latest
+https://api.studio.thegraph.com/query/86507/chatterpay-arbitrum-sepolia/version/latest
 
 
 7. Tests queries in subgraph studio

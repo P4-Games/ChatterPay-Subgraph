@@ -90,7 +90,7 @@ The **`setup-local`** script installs and configures everything required to run 
 
 * Installs **The Graph CLI** (via npm) if not present
 * Sets up and starts **Docker** containers (Graph Node, IPFS, and Postgres)
-* Detects or prompts for the target **network** (`scroll` or `scroll-sepolia`)
+* Detects or prompts for the target **network** (`scroll`, `scroll-sepolia` or `arbitrum-sepolia`)
 * Generates `subgraph.yaml` and `schema.graphql` for the selected network
 * Runs `graph codegen` and `graph build`
 * Deploys the subgraph to your **local Graph Node**
@@ -106,7 +106,7 @@ npm run setup-local
 During execution, the script will ask:
 
 ```
-🌐 Select network (scroll / scroll-sepolia):
+🌐 Select network (scroll / scroll-sepolia / arbitrum-sepolia):
 ```
 
 You can also skip the prompt by providing the network directly:
@@ -115,7 +115,11 @@ You can also skip the prompt by providing the network directly:
 yarn setup-local scroll
 # or
 yarn setup-local scroll-sepolia
+# or
+yarn setup-local arbitrum-sepolia
 ```
+
+> Note: Scroll Sepolia is deprecated (no online RPC nodes as of 2026-08) — the active test network is **Arbitrum Sepolia**.
 
 If you encounter issues specifically with **The Graph CLI** installation, you can manually reinstall or fix it following:
 ➡️ [./.doc/development/install_graph_cli.md](./.doc/development/install_graph_cli.md)

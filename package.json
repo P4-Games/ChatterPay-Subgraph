@@ -19,7 +19,8 @@
     "docker-down": "docker compose down -v --remove-orphans",
     "docker-reset": "docker compose down -v",
     "docker-logs": "docker compose logs -f graph-node",
-    "deploy-test": "graph deploy chatterpay-scroll-sepolia"
+    "deploy-test": "graph deploy chatterpay-scroll-sepolia",
+    "deploy-arbitrum-sepolia": "graph deploy chatterpay-arbitrum-sepolia"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.98.0",

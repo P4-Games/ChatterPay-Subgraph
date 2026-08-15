@@ -17,7 +17,7 @@ async function askNetwork(): Promise<string> {
     output: process.stdout,
   });
   return new Promise((resolve) => {
-    rl.question("🌐 Select network (scroll / scroll-sepolia): ", (answer) => {
+    rl.question("🌐 Select network (scroll / scroll-sepolia / arbitrum-sepolia): ", (answer) => {
       rl.close();
       resolve(answer.trim());
     });
@@ -36,9 +36,9 @@ async function askNetwork(): Promise<string> {
   }
 
   // Validate network name
-  const validNetworks = ["scroll", "scroll-sepolia"];
+  const validNetworks = ["scroll", "scroll-sepolia", "arbitrum-sepolia"];
   if (!validNetworks.includes(networkArg)) {
-    console.error("❌ Invalid network. Must be 'scroll' or 'scroll-sepolia'.");
+    console.error("❌ Invalid network. Must be 'scroll', 'scroll-sepolia' or 'arbitrum-sepolia'.");
     process.exit(1);
   }
 
